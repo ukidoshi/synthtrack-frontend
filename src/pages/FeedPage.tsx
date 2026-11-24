@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Alert from 'react-bootstrap/Alert'
-import Button from 'react-bootstrap/Button'
-import { ChevronDown, ChevronUp, Heart, Thermometer } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import { ChevronDown, Heart } from 'lucide-react'
 import {
   stageImage, stageVideo, synthesisStages,
 } from '../data/synthesisStages'
@@ -27,40 +27,23 @@ export function FeedPage({ stageId }: { stageId: number | null }) {
 function FeedStage({ stage, nextId }: { stage: SynthesisStage; nextId: number }) {
   const [expanded, setExpanded] = useState(false)
 
-  return (
-    <article className="feed-stage" aria-label="Лента стадий синтеза">
-      <video
-        className="stage-video"
-        src={stageVideo(stage)}
-        poster={stageImage(stage)}
-        autoPlay
-        muted
-        loop
-        playsInline
-        controls
-        aria-label={`Видео: ${stage.name}`}
-      />
-      <div className="feed-overlay">
-        <div className="feed-metadata">
-          <span><Thermometer size={17} aria-hidden="true" /> {stage.temperature_celsius} °C</span>
-          <span>Выход {stage.yield_percentage.toLocaleString('ru-RU')} %</span>
-          <span aria-label={`Лайков: ${stage.likes_count}`}><Heart size={16} aria-hidden="true" /> {stage.likes_count}</span>
-        </div>
-        <h1>{stage.name}</h1>
-        <p id="stage-description" hidden={!expanded}>{stage.brief_description}</p>
-        <div className="feed-actions">
-          <Button
-            variant="outline-light"
-            aria-expanded={expanded}
-            aria-controls="stage-description"
-            onClick={() => setExpanded((wasExpanded) => !wasExpanded)}
-          >
-            {expanded ? 'Свернуть' : 'Подробнее'}
-            {expanded ? <ChevronUp size={17} aria-hidden="true" /> : <ChevronDown size={17} aria-hidden="true" />}
-          </Button>
-          <a className="btn btn-primary" href={`#/feed/${nextId}`}>Следующий</a>
-        </div>
-      </div>
-    </article>
-  )
+  return <article className="feed-box">
+    <video className="feed-video-player" autoPlay muted loop playsInline src={stageVideo(stage)} poster={stageImage(stage)} />
+    <div className="feed-overlay" aria-hidden="true" />
+    <aside className="feed-sidebar" aria-label="Действия с этапом">
+      <div className="feed-badge"><span className="feed-badge-text">{stage.yield_percentage}%<br/>ВЫХОД</span></div>
+      <div className="feed-action"><div className="feed-btn"><Heart aria-hidden="true"/></div>
+        <span className="feed-action-label">Лайк {stage.likes_count}</span></div>
+      <a href={`#/feed/${nextId}`} className="feed-action feed-action-next">
+        <div className="feed-btn"><ArrowRight aria-hidden="true"/></div><span className="feed-action-label">Далее</span>
+      </a>
+    </aside>
+    <div className="feed-bottom-info">
+      <h1 className="feed-title">{stage.name}</h1>
+      <details open={expanded} onToggle={event => setExpanded(event.currentTarget.open)}>
+        <summary className="feed-expand">ПОКАЗАТЬ ВСЁ <ChevronDown size={14} aria-hidden="true"/></summary>
+        <p className="feed-desc">{stage.brief_description} Температура стабилизируется на {stage.temperature_celsius}°C.</p>
+      </details>
+    </div>
+  </article>
 }

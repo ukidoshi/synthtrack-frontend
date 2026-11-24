@@ -1,42 +1,31 @@
-import type { FormEvent } from 'react'
-import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
-import InputGroup from 'react-bootstrap/InputGroup'
-import { SlidersHorizontal } from 'lucide-react'
+import { Button, Form } from 'react-bootstrap'
+import { ChevronDown } from 'lucide-react'
 
-interface TemperatureFilterProps {
+interface FilterProps {
   value: string
+  component: string
   onChange: (value: string) => void
+  onComponentChange: (value: string) => void
   onApply: () => void
   onReset: () => void
 }
 
-export function TemperatureFilter({ value, onChange, onApply, onReset }: TemperatureFilterProps) {
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    onApply()
-  }
-
-  return (
-    <Form className="temperature-filter" onSubmit={handleSubmit}>
-      <h2><SlidersHorizontal size={17} aria-hidden="true" /> Фильтр по температуре</h2>
-      <Form.Group controlId="filter-temperature" className="temperature-field">
-        <Form.Label>Минимальная температура</Form.Label>
-        <InputGroup>
-          <Form.Control
-            type="number"
-            step="any"
-            placeholder="Любая"
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-          />
-          <InputGroup.Text>°C</InputGroup.Text>
-        </InputGroup>
-      </Form.Group>
-      <div className="filter-buttons">
-        <Button type="submit" variant="primary">Применить</Button>
-        <Button type="button" variant="outline-secondary" onClick={onReset}>Сбросить</Button>
+export function TemperatureFilter({ value, component, onChange, onComponentChange, onApply, onReset }: FilterProps) {
+  return <details className="filter-box" open>
+    <summary className="filter-title">Фильтры <ChevronDown aria-hidden="true" /></summary>
+    <Form onSubmit={event => { event.preventDefault(); onApply() }}>
+      <div className="form-group">
+        <Form.Label htmlFor="filter-temperature">Температура</Form.Label>
+        <Form.Control id="filter-temperature" className="form-input" type="number" step="any"
+          placeholder="°C" value={value} onChange={event => onChange(event.target.value)} />
+        <Form.Label htmlFor="filter-components">Компоненты</Form.Label>
+        <Form.Control id="filter-components" className="form-input" type="search"
+          placeholder="Название компонента, процесса..." value={component} onChange={event => onComponentChange(event.target.value)} />
+      </div>
+      <div className="filter-actions">
+        <Button variant="" type="submit" className="button button-primary">Применить</Button>
+        <Button variant="" type="button" className="button button-outline" onClick={onReset}>Сбросить</Button>
       </div>
     </Form>
-  )
+  </details>
 }

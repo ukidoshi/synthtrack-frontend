@@ -1,9 +1,11 @@
-import Alert from 'react-bootstrap/Alert'
 import { StageCard } from '../components/StageCard'
 import { TemperatureFilter } from '../components/TemperatureFilter'
 import { synthesisStages } from '../data/synthesisStages'
 
 interface StageGridPageProps {
+  componentInput: string
+  component: string
+  onComponentChange: (value: string) => void
   temperatureInput: string
   minimumTemperature: number | null
   onTemperatureChange: (value: string) => void
@@ -12,29 +14,21 @@ interface StageGridPageProps {
 }
 
 export function StageGridPage({
-  temperatureInput, minimumTemperature, onTemperatureChange, onApply, onReset,
+  componentInput, component, onComponentChange, temperatureInput, minimumTemperature, onTemperatureChange, onApply, onReset,
 }: StageGridPageProps) {
-  const visibleStages = minimumTemperature === null
-    ? synthesisStages
-    : synthesisStages.filter((stage) => stage.temperature_celsius >= minimumTemperature)
-
-  return (
-    <>
-      <h1>Этапы синтеза</h1>
-      <TemperatureFilter
-        value={temperatureInput}
-        onChange={onTemperatureChange}
-        onApply={onApply}
-        onReset={onReset}
-      />
-      <p className="result-count" role="status">Показано {visibleStages.length} из {synthesisStages.length}</p>
-      {visibleStages.length > 0 ? (
-        <div className="stage-grid" aria-label="Этапы синтеза">
-          {visibleStages.map((stage) => <StageCard key={stage.id} stage={stage} />)}
-        </div>
-      ) : (
-        <Alert variant="light" className="empty-grid">Нет этапов с такой температурой. Измените или сбросьте фильтр.</Alert>
-      )}
-    </>
+  const visibleStages = synthesisStages.filter(stage =>
+    (minimumTemperature === null || stage.temperature_celsius >= minimumTemperature) &&
+    (stage.name + ' ' + stage.brief_description).toLocaleLowerCase('ru').includes(component)
   )
+  return <>
+    <header className="header-section"><h1 className="app-title">SynthTrack</h1></header>
+    <section className="grid-container" aria-label="Этапы синтеза">
+      <TemperatureFilter value={temperatureInput} component={componentInput} onChange={onTemperatureChange}
+        onComponentChange={onComponentChange} onApply={onApply} onReset={onReset} />
+      <div className="cards-grid">
+        {visibleStages.map((stage, index) => <StageCard key={stage.id} stage={stage} number={index + 1} />)}
+        {!visibleStages.length && <p className="grid-empty" role="status">Записи не найдены</p>}
+      </div>
+    </section>
+  </>
 }

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { FlaskConical, UserRound } from 'lucide-react'
 import { BottomNav } from './components/BottomNav'
 import { FeedPage } from './pages/FeedPage'
 import { StageGridPage } from './pages/StageGridPage'
@@ -10,6 +9,9 @@ export default function App() {
   const [location, setLocation] = useState(readLocation)
   const [temperatureInput, setTemperatureInput] = useState('')
   const [minimumTemperature, setMinimumTemperature] = useState<number | null>(null)
+
+  const [componentInput, setComponentInput] = useState('')
+  const [component, setComponent] = useState('')
 
   useEffect(() => {
     function syncLocation() {
@@ -25,30 +27,27 @@ export default function App() {
   const activePage = feedRoute ? 'feed' : 'grid'
 
   function applyTemperature() {
+    setComponent(componentInput.trim().toLocaleLowerCase('ru'))
     setMinimumTemperature(temperatureInput === '' ? null : Number(temperatureInput))
   }
 
   function resetTemperature() {
+    setComponentInput('')
+    setComponent('')
     setTemperatureInput('')
     setMinimumTemperature(null)
   }
 
   return (
-    <>
-      <header className="site-header">
-        <div className="header-inner">
-          <a className="wordmark" href="#/stages" aria-label="SynthTrack – плитка">
-            <span className="brand-icon"><FlaskConical size={22} /></span>
-            <span>SynthTrack</span>
-          </a>
-          <span className="guest-label"><UserRound size={15} aria-hidden="true" /> Гость</span>
-        </div>
-      </header>
-      <main className={activePage === 'feed' ? 'main-content feed-content' : 'main-content'}>
+    <div className="mobile-wrapper">
+      <main className="viewport-content" key={location}>
         {feedRoute ? (
           <FeedPage stageId={feedRoute[1] ? Number(feedRoute[1]) : null} />
         ) : (
           <StageGridPage
+            componentInput={componentInput}
+            component={component}
+            onComponentChange={setComponentInput}
             temperatureInput={temperatureInput}
             minimumTemperature={minimumTemperature}
             onTemperatureChange={setTemperatureInput}
@@ -58,6 +57,6 @@ export default function App() {
         )}
       </main>
       <BottomNav activePage={activePage} />
-    </>
+    </div>
   )
 }

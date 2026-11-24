@@ -1,30 +1,13 @@
-import Nav from 'react-bootstrap/Nav'
-import Navbar from 'react-bootstrap/Navbar'
-import { CirclePlus, Clapperboard, Grid2X2, LogIn } from 'lucide-react'
+import { Nav, Navbar } from 'react-bootstrap'
+import { FileX, Flag, LogIn, Video } from 'lucide-react'
 
-type Page = 'feed' | 'grid'
-
-export function BottomNav({ activePage }: { activePage: Page }) {
-  return (
-    <Navbar as="nav" fixed="bottom" className="bottom-nav" aria-label="Основная навигация">
-      <Nav className="dock-inner">
-        <Nav.Link href="#/feed" active={activePage === 'feed'} aria-current={activePage === 'feed' ? 'page' : undefined}>
-          <Clapperboard size={21} aria-hidden="true" />
-          Лента
-        </Nav.Link>
-        <Nav.Link as="span" role="link" aria-disabled="true" disabled>
-          <CirclePlus size={21} aria-hidden="true" />
-          Добавление
-        </Nav.Link>
-        <Nav.Link href="#/stages" active={activePage === 'grid'} aria-current={activePage === 'grid' ? 'page' : undefined}>
-          <Grid2X2 size={21} aria-hidden="true" />
-          Плитка
-        </Nav.Link>
-        <Nav.Link as="span" role="link" aria-disabled="true" disabled>
-          <LogIn size={21} aria-hidden="true" />
-          Вход
-        </Nav.Link>
-      </Nav>
-    </Navbar>
-  )
+export function BottomNav({ activePage }: { activePage: 'feed' | 'grid' }) {
+  return <Navbar as="nav" className="bottom-dock" aria-label="Основная навигация">
+    <Nav className="tabs-row">
+      <Nav.Link href="#/feed" className="tab-item" active={activePage === 'feed'} aria-current={activePage === 'feed' ? 'page' : undefined}><Video/><span>Лента</span></Nav.Link>
+      <Nav.Link as="span" disabled aria-disabled="true" className="tab-item"><FileX/><span>Добавление</span></Nav.Link>
+      <Nav.Link href="#/stages" className="tab-item" active={activePage === 'grid'} aria-current={activePage === 'grid' ? 'page' : undefined}><Flag/><span>Плитка</span></Nav.Link>
+      <Nav.Link as="span" disabled aria-disabled="true" className="tab-item"><LogIn/><span>Вход</span></Nav.Link>
+    </Nav>
+  </Navbar>
 }
