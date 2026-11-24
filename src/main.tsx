@@ -6,10 +6,12 @@ import '@fontsource/ibm-plex-sans/600.css'
 import '@fontsource/ibm-plex-sans/700.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './styles.css'
+import { Provider } from 'react-redux'
+import { store } from './store'
 import App from './App'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <Provider store={store}><App /></Provider>
   </StrictMode>,
 )

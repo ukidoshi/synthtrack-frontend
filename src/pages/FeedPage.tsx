@@ -2,15 +2,13 @@ import { useState } from 'react'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import { ChevronDown, ChevronUp, Heart, Thermometer } from 'lucide-react'
-import {
-  stageImage, stageVideo, synthesisStages,
-} from '../data/synthesisStages'
+import { stageImage, stageVideo } from '../data/synthesisStages'
 import type { SynthesisStage } from '../data/synthesisStages'
 
-export function FeedPage({ stageId }: { stageId: number | null }) {
-  const index = stageId === null ? 0 : synthesisStages.findIndex((stage) => stage.id === stageId)
-  const stage = synthesisStages[index]
+import { likeSynthesisStage, useAppDispatch, useSynthesis } from '../store'
 
+export function FeedPage() {
+  const { current: stage } = useSynthesis()
   if (!stage) {
     return (
       <Alert variant="light" className="empty-grid">
@@ -20,11 +18,11 @@ export function FeedPage({ stageId }: { stageId: number | null }) {
     )
   }
 
-  const nextStage = synthesisStages[(index + 1) % synthesisStages.length]
-  return <FeedStage key={stage.id} stage={stage} nextId={nextStage.id} />
+  return <FeedStage key={stage.id} stage={stage} />
 }
-
-function FeedStage({ stage, nextId }: { stage: SynthesisStage; nextId: number }) {
+function FeedStage({ stage }: { stage: SynthesisStage }) {
+  const { chemist } = useSynthesis()
+  const dispatch = useAppDispatch()
   const [expanded, setExpanded] = useState(false)
 
   return (
@@ -42,12 +40,28 @@ function FeedStage({ stage, nextId }: { stage: SynthesisStage; nextId: number })
       />
       <div className="feed-overlay">
         <div className="feed-metadata">
-          <span><Thermometer size={17} aria-hidden="true" /> {stage.temperature_celsius} °C</span>
+          <span>
+            <Thermometer size={17} aria-hidden="true" />{' '}
+            {stage.temperature_celsius} °C
+          </span>
           <span>Выход {stage.yield_percentage.toLocaleString('ru-RU')} %</span>
-          <span aria-label={`Лайков: ${stage.likes_count}`}><Heart size={16} aria-hidden="true" /> {stage.likes_count}</span>
+          {chemist && (
+            <Button
+              size="sm"
+              aria-pressed={Boolean(stage.is_liked)}
+              onClick={() => dispatch(likeSynthesisStage(stage))}
+            >
+              {stage.is_liked ? 'Снять лайк' : 'Нравится'}
+            </Button>
+          )}
+          <span aria-label={`Лайков: ${stage.likes_count}`}>
+            <Heart size={16} aria-hidden="true" /> {stage.likes_count}
+          </span>
         </div>
         <h1>{stage.name}</h1>
-        <p id="stage-description" hidden={!expanded}>{stage.brief_description}</p>
+        <p id="stage-description" hidden={!expanded}>
+          {stage.brief_description}
+        </p>
         <div className="feed-actions">
           <Button
             variant="outline-light"
@@ -56,9 +70,15 @@ function FeedStage({ stage, nextId }: { stage: SynthesisStage; nextId: number })
             onClick={() => setExpanded((wasExpanded) => !wasExpanded)}
           >
             {expanded ? 'Свернуть' : 'Подробнее'}
-            {expanded ? <ChevronUp size={17} aria-hidden="true" /> : <ChevronDown size={17} aria-hidden="true" />}
+            {expanded ? (
+              <ChevronUp size={17} aria-hidden="true" />
+            ) : (
+              <ChevronDown size={17} aria-hidden="true" />
+            )}
           </Button>
-          <a className="btn btn-primary" href={`#/feed/${nextId}`}>Следующий</a>
+          <a className="btn btn-primary" href={`#/feed/${stage.id}/next`}>
+            Следующий
+          </a>
         </div>
       </div>
     </article>

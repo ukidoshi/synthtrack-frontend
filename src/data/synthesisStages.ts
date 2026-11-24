@@ -1,4 +1,6 @@
 export interface SynthesisStage {
+  is_owner?: number
+  is_liked?: number
   id: number
   name: string
   brief_description: string

@@ -329,3 +329,8 @@ h1 {
   .dock-inner .nav-link, .feed-actions .btn { font-size: .795rem; }
   .feed-overlay { padding-inline: 12px; }
 }
+
+.editor-form {display:grid; gap:1rem; max-width:36rem; background:white; padding:1.5rem; border-radius:1rem;}
+.editor-form label {display:grid; gap:.35rem;}
+.loading-screen {position:fixed; inset:0; background:#ffffffac; display:grid; place-content:center; justify-items:center; gap:.5rem; z-index:2000;}
+.feed-metadata button { pointer-events: auto; }
