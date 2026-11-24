@@ -212,6 +212,15 @@
               "type": "integer",
               "example": 80
             }
+          },
+          {
+            "name": "filter_desc",
+            "in": "query",
+            "required": false,
+            "description": "Текст в названии или описании стадии",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {

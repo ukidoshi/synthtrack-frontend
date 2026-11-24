@@ -393,6 +393,8 @@ export class Api<
          * @example 80
          */
         filter_temperature?: number;
+        /** Текст в названии или описании стадии */
+        filter_desc?: string;
       },
       params: RequestParams = {},
     ) =>

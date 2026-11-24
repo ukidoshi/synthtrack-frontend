@@ -1,6 +1,6 @@
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
-import { CirclePlus, Clapperboard, Grid2X2, LogIn } from 'lucide-react'
+import { FileX, Video, Flag, LogIn } from 'lucide-react'
 
 type Page = 'feed' | 'grid' | 'add' | 'login'
 
@@ -16,43 +16,47 @@ export function BottomNav({
   return (
     <Navbar
       as="nav"
-      fixed="bottom"
-      className="bottom-nav"
+
+      className="bottom-dock"
       aria-label="Основная навигация"
     >
-      <Nav className="dock-inner">
+      <Nav className="tabs-row">
         <Nav.Link
+          className="tab-item"
           href="#/feed"
           active={activePage === 'feed'}
           aria-current={activePage === 'feed' ? 'page' : undefined}
         >
-          <Clapperboard size={21} aria-hidden="true" />
-          Лента
+          <Video size={21} aria-hidden="true" />
+          <span>Лента</span>
         </Nav.Link>
         <Nav.Link
+          className="tab-item"
           href="#/add"
           active={activePage === 'add'}
           disabled={!chemist}
         >
-          <CirclePlus size={21} aria-hidden="true" />
-          Добавление
+          <FileX size={21} aria-hidden="true" />
+          <span>Добавление</span>
         </Nav.Link>
         <Nav.Link
+          className="tab-item"
           href="#/stages"
           active={activePage === 'grid'}
           aria-current={activePage === 'grid' ? 'page' : undefined}
         >
-          <Grid2X2 size={21} aria-hidden="true" />
-          Плитка
+          <Flag size={21} aria-hidden="true" />
+          <span>Плитка</span>
         </Nav.Link>
         <Nav.Link
+          className="tab-item"
           href={chemist ? undefined : '#/login'}
           as={chemist ? 'button' : 'a'}
           active={activePage === 'login'}
           onClick={chemist ? logout : undefined}
         >
           <LogIn size={21} aria-hidden="true" />
-          {chemist ? 'Выход' : 'Вход'}
+          <span>{chemist ? 'Выход' : 'Вход'}</span>
         </Nav.Link>
       </Nav>
     </Navbar>

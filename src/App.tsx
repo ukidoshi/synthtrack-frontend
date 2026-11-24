@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Alert, Spinner } from 'react-bootstrap'
-import { FlaskConical, UserRound } from 'lucide-react'
 import { BottomNav } from './components/BottomNav'
 import { FeedPage } from './pages/FeedPage'
 import { StageGridPage } from './pages/StageGridPage'
@@ -18,7 +17,7 @@ import {
 const readLocation = () => window.location.hash
 export default function App() {
   const [location, setLocation] = useState(readLocation)
-  const { chemist, minimum, pending, mock, error } = useSynthesis()
+  const { chemist, minimum, component, pending, mock, error } = useSynthesis()
   const dispatch = useAppDispatch()
   useEffect(() => {
     function sync() {
@@ -42,7 +41,7 @@ export default function App() {
     if (page === 'login') return
     const request = dispatch(loadSynthesisStages({ page, id, next }))
     return () => request.abort()
-  }, [dispatch, page, id, next, minimum, chemist])
+  }, [dispatch, page, id, next, minimum, component, chemist])
   async function logout() {
     dispatch(actions.authPending(true))
     try {
@@ -69,26 +68,8 @@ export default function App() {
   }
   return (
     <>
-      <div inert={pending > 0}>
-        <header className="site-header">
-          <div className="header-inner">
-            <a className="wordmark" href="#/stages">
-              <span className="brand-icon">
-                <FlaskConical size={22} />
-              </span>
-              SynthTrack
-            </a>
-            <span className="guest-label">
-              <UserRound size={15} />
-              {chemist || 'Гость'}
-            </span>
-          </div>
-        </header>
-        <main
-          className={
-            page === 'feed' ? 'main-content feed-content' : 'main-content'
-          }
-        >
+      <div className="mobile-wrapper" inert={pending > 0}>
+        <main className="viewport-content" key={page}>
           {error && (
             <Alert
               variant="danger"
@@ -99,7 +80,9 @@ export default function App() {
             </Alert>
           )}
           {mock && page !== 'login' && (
-            <small>Сервис недоступен · демонстрационные данные</small>
+            <small className="mock-status">
+              Сервис недоступен · демонстрационные данные
+            </small>
           )}
           {page === 'feed' ? (
             <FeedPage />

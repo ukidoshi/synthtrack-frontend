@@ -20,6 +20,8 @@ export const tokenKey = 'synthtrack.access_token'
 const initialState = {
   chemist: '',
   temperature: '',
+  componentInput: '',
+  component: '',
   minimum: null as number | null,
   pending: 0,
   stages: [] as SynthesisStage[],
@@ -61,7 +63,10 @@ export const loadSynthesisStages = task(
     const min = state.synthesis.minimum
     try {
       if (route.page === 'grid') {
-        const query = min === null ? {} : { filter_temperature: Math.ceil(min) }
+        const query = {
+          filter_temperature: min === null ? undefined : Math.ceil(min),
+          filter_desc: state.synthesis.component || undefined,
+        }
         const response = await api.listSynthesisStages(query, options)
         return {
           stages: response.data.data
@@ -99,7 +104,11 @@ export const loadSynthesisStages = task(
           : synthesisStages.findIndex((s) => s.id === route.id)
       return {
         stages: synthesisStages.filter(
-          (s) => min === null || s.temperature_celsius >= min,
+          (s) =>
+            (min === null || s.temperature_celsius >= min) &&
+            (s.name + ' ' + s.brief_description)
+              .toLocaleLowerCase('ru')
+              .includes(state.synthesis.component),
         ),
         current:
           index < 0
@@ -158,12 +167,18 @@ const slice = createSlice({
     editTemperature: (s, a: PayloadAction<string>) => {
       s.temperature = a.payload
     },
+    editComponent: (s, action: PayloadAction<string>) => {
+      s.componentInput = action.payload
+    },
     applyTemperature: (s) => {
+      s.component = s.componentInput.trim().toLocaleLowerCase('ru')
       s.minimum = s.temperature === '' ? null : Number(s.temperature)
     },
     resetTemperature: (s) => {
       s.minimum = null
       s.temperature = ''
+      s.componentInput = ''
+      s.component = ''
     },
     authPending: (s, a: PayloadAction<boolean>) => {
       s.pending += a.payload ? 1 : -1

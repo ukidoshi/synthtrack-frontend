@@ -30,27 +30,33 @@ export function ChemistLogin() {
   }
   return (
     <>
-      <h1>Вход</h1>
-      <Form className="editor-form" onSubmit={login}>
-        <label>
+      <header className="header-section">
+        <h1 className="app-title">Вход</h1>
+      </header>
+      <Form className="form-stack" onSubmit={login}>
+        <label className="form-group form-label">
           Электронная почта
           <Form.Control
+            className="form-input"
             type="email"
             name="email"
             autoComplete="username"
             required
           />
         </label>
-        <label>
+        <label className="form-group form-label">
           Пароль
           <Form.Control
+            className="form-input"
             type="password"
             name="password"
             autoComplete="current-password"
             required
           />
         </label>
-        <Button type="submit">Войти</Button>
+        <Button variant="" className="button button-primary" type="submit">
+          Войти
+        </Button>
       </Form>
     </>
   )
